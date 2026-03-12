@@ -1,0 +1,123 @@
+body {
+  font-family: sans-serif;
+  padding: 20px;
+}
+
+.step {
+  margin-bottom: 20px;
+}
+
+.hidden {
+  display: none;
+}
+
+#confirmModal {
+  border: 1px solid gray;
+  padding: 20px;
+  background-color: #f9f9f9;
+  margin-top: 20px;
+}
+
+button {
+  background-color: #00aaff; /* 水色 */
+  color: white;              /* 文字色を白に */
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #008fcc; /* 少し濃い水色に変化 */
+}
+
+#step3 label:last-of-type {
+  margin-bottom: 20px;
+  display: inline-block;
+}
+
+/* ボタンのグループ全体の余白調整（必要に応じて） */
+.button-group {
+  margin-top: 10px;
+}
+
+#step2 label {
+  display: block;
+  margin-bottom: 2px;  /* ← 数値を大きくするとさらに広くなります */
+}
+
+.menu-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px; /* ボタンの間隔を調整 */
+  margin-bottom: 20px;
+}
+
+.menu-nav button {
+  padding: 8px 16px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* B カレーのセクションとその項目との間隔を広げる */
+#b-curry {
+  margin-bottom: 20px;  /* B カレーセクションとその後の項目との間隔 */
+}
+
+#b-curry label {
+  margin-top: 15px; /* 各項目（カレーライスなど）の間隔を広げる */
+}
+
+#c-teishoku {
+  margin-bottom: 20px; /* C 定食セクションとその後の項目との間隔 */
+}
+
+#c-teishoku label {
+  margin-top: 15px; /* 各項目（カレーライスなど）の間隔を広げる */
+}
+
+#d-teppanyaki {
+  margin-bottom: 20px; /* D 鉄板焼きセクションとその後の項目との間隔 */
+}
+
+#d-teppanyaki label {
+  margin-top: 15px; /* 各項目（カレーライスなど）の間隔を広げる */
+}
+
+#e-chinese {
+  margin-bottom: 20px; /* E 中華セクションとその後の項目との間隔 */
+}
+
+#e-chinese label {
+  margin-top: 15px; /* 各項目（カレーライスなど）の間隔を広げる */
+}
+
+#f-wamen {
+  margin-bottom: 20px; /* F 和麺セクションとその後の項目との間隔 */
+}
+
+#f-wamen label {
+  margin-top: 15px; /* 各項目（カレーライスなど）の間隔を広げる */
+}
+
+#saboten {
+  margin-bottom: 20px; /* サボテンセクションとその後の項目との間隔 */
+}
+
+#saboten label {
+  margin-top: 15px; /* 各項目（カレーライスなど）の間隔を広げる */
+}
+
+#others {
+  margin-bottom: 20px; /* その他セクションとその後の項目との間隔 */
+}
+
+#others label {
+  margin-top: 15px; /* 各項目（カレーライスなど）の間隔を広げる */
+}

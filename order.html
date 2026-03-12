@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>注文ページ</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <h1>慶應 食堂モバイルオーダー</h1>
+
+  <!-- Step 1: 注文日表示 -->
+  <section class="step" id="step1">
+    <p id="autoOrderDate" style="font-weight: bold; margin-bottom: 10px;"></p>
+    <button class="nextBtn">次へ</button>
+  </section>
+
+  <!-- Step 2: メニュー -->
+  <section class="step hidden" id="step2">
+    <h2>メニュー</h2>
+
+    <div class="menu-nav">
+      <button onclick="scrollToCategory('b-curry')">B カレー</button>
+      <button onclick="scrollToCategory('c-teishoku')">C 定食・丼</button>
+      <button onclick="scrollToCategory('d-teppanyaki')">D 鉄板焼</button>
+      <button onclick="scrollToCategory('e-chinese')">E 中華麺</button>
+      <button onclick="scrollToCategory('f-wamen')">F 和麺</button>
+      <button onclick="scrollToCategory('saboten')">さぼてん</button>
+      <button onclick="scrollToCategory('others')">その他</button>
+    </div>
+
+    <div id="b-curry" class="category-header"><strong>B カレー</strong></div>
+    <label><input type="checkbox" class="menu" data-price="380" value="カレーライス"> カレーライス（380円）</label><br/>
+    <label><input type="checkbox" class="menu" data-price="490" value="コロッケカレー"> コロッケカレー（490円）</label><br/>
+    <label><input type="checkbox" class="menu" data-price="560" value="カツカレー"> カツカレー（560円）</label><br/>
+    <label><input type="checkbox" class="menu" data-price="450" value="大盛りカレー"> 大盛りカレー (450円)</label><br/>
+    <label><input type="checkbox" class="menu" data-price="680" value="エベレストカレー"> エベレストカレー (680円)</label><br/>
+    <label><input type="checkbox" class="menu" data-price="300" value="ミニカレー"> ミニカレー（300円）</label><br/>
+
+    <div id="c-teishoku" class="category-header"><strong>C 定食・丼</strong></div>
+    <label><input type="checkbox" class="menu" data-price="530" value="たらふく丼"> たらふく丼（530円）</label><br/>
+    <label><input type="checkbox" class="menu" data-price="580" value="たらふくランチ"> たらふくランチ（580円）</label><br/> 
+    <label><input type="checkbox" class="menu" data-price="600" value="鶏竜田揚定食"> 鶏竜田揚定食（600円）</label><br/>
+    <label><input type="checkbox" class="menu" data-price="650" value="タルタル竜田定食"> タルタル竜田定食（650円）</label><br/>
+    
+    <div id="d-teppanyaki" class="category-header"><strong>D 鉄板焼</strong></div>
+    <label><input type="checkbox" class="menu" data-price="700" value="金ちゃん焼肉"> 金ちゃん焼肉（700円）</label><br/>
+
+    <div id="e-chinese" class="category-header"><strong>E 中華麺</strong></div>
+    <label><input type="checkbox" class="menu" data-price="500" value="豚天タルタルぶっかけうどん"> 豚天タルタルぶっかけうどん（500円）</label><br/>
+    <label><input type="checkbox" class="menu" data-price="470" value="醤油ラーメン"> 醤油ラーメン（470円）</label><br/>
+    <label><input type="checkbox" class="menu" data-price="470" value="塩ラーメン"> 塩ラーメン（470円）</label><br/>
+    <label><input type="checkbox" class="menu" data-price="470" value="味噌ラーメン"> 味噌ラーメン（470円）</label><br/>
+    <label><input type="checkbox" class="menu" data-price="520" value="とんこつラーメン"> とんこつラーメン（520円）</label><br/>
+    <label><input type="checkbox" class="menu" data-price="510" value="まぜそば"> まぜそば（510円）</label><br/>
+    <label><input type="checkbox" class="menu" data-price="620" value="味噌カツラーメン"> 味噌カツラーメン（620円）</label><br/>
+    <label><input type="checkbox" class="menu" data-price="670" value="ミニカレー/ラーメンセット"> ミニカレー/ラーメンセット（670円）</label><br/>
+    
+    <div id="f-wamen" class="category-header"><strong>F 和麺</strong></div>
+    <label><input type="checkbox" class="menu" data-price="430" value="きつねうどん・そば"> きつねうどん・そば（430円）</label><br/>
+    <label><input type="checkbox" class="menu" data-price="340" value="ぶっかけうどん"> ぶっかけうどん（340円）</label><br/>
+    <label><input type="checkbox" class="menu" data-price="390" value="明太ぶっかけうどん"> 明太ぶっかけうどん（390円）</label><br/>
+    <label><input type="checkbox" class="menu" data-price="500" value="カツカレーうどん"> カツカレーうどん（500円）</label><br/>
+    <label><input type="checkbox" class="menu" data-price="440" value="ミートスパ"> ミートスパ（440円）</label><br/>
+    <label><input type="checkbox" class="menu" data-price="440" value="カレースパ"> カレースパ（440円）</label><br/>
+    
+     <div id="saboten" class="category-header"><strong>さぼてん</strong></div>
+    <label><input type="checkbox" class="menu" data-price="830" value="ロースカツ定食"> ロースカツ定食（830円）</label><br/>
+    <label><input type="checkbox" class="menu" data-price="780" value="東京レトロ勝丼"> 東京レトロ勝丼（780円）</label><br/>
+    <label><input type="checkbox" class="menu" data-price="780" value="味噌カツ丼"> 味噌カツ丼（780円）</label><br/>
+    
+    <div id="others" class="category-header"><strong>その他</strong></div>
+    <label><input type="checkbox" class="menu" data-price="110" value="トッピング110 (コロッケ)"> トッピング110 (コロッケ)（110円）</label><br/>
+    <label><input type="checkbox" class="menu" data-price="180" value="トッピング180 (とんかつ/唐揚げ)"> トッピング180 (とんかつ/唐揚げ) (180円) </label><br/>
+    <label><input type="checkbox" class="menu" data-price="180" value="(単) ご飯"> (単) ご飯（180円）</label><br/>
+    <label><input type="checkbox" class="menu" data-price="70" value="ご飯大盛"> ご飯大盛（70円）</label><br/>
+    <label><input type="checkbox" class="menu" data-price="100" value="(単) ハーフご飯"> (単) ハーフご飯（100円）</label><br/>
+    <label><input type="checkbox" class="menu" data-price="60" value="(単) みそ汁"> (単) みそ汁（60円）</label><br/>
+    <label><input type="checkbox" class="menu" data-price="180" value="麺大盛 (1玉)"> 麺大盛 (1玉)（180円）</label><br/>
+    <label><input type="checkbox" class="menu" data-price="250" value="ミニチャーシュー丼"> ミニチャーシュー丼（250円）</label><br/>
+    <label><input type="checkbox" class="menu" data-price="110" value="麺トッピング110 (きつね/コロッケ)"> 麺トッピング110 (きつね/コロッケ)（110円）</label><br/>
+    <p>合計金額: <span id="totalPrice">0</span>円</p>
+    <button class="nextBtn" disabled>次へ</button>
+  </section>
+
+  <!-- Step 3: 支払い方法 -->
+  <section class="step hidden" id="step3">
+    <h2>支払い方法</h2>
+    <input type="radio" name="payment" value="当日、店頭で現金払い"> 当日、店頭で現金払い<br/>
+    <input type="radio" name="payment" value="事前にクレジットカードで払う"> 事前にクレジットカードで払う(こちらを押した場合、クレジットカード情報の記入は不要です。続けて、「次へ」ボタンを押してください。)<br/>
+    <input type="radio" name="payment" value="当日、QRコードやバーコードで決済"> 当日、QRコードやバーコードで決済(PayPay,楽天ペイ、d払い、au PAY,メルペイを使用できます。)<br/>
+    <div class="button-group">
+    <button class="backBtn">戻る</button>
+    <button id="submitBtn" disabled>次へ</button>
+  </div>
+  </section>
+
+  <!-- Step 4: 確認 -->
+  <section class="step hidden" id="step4">
+    <div id="confirmModal">
+      <p>以下の内容で注文を確定しますか？</p>
+      <div id="orderSummary"></div>
+      <button class="backBtn">戻る</button>
+      <button id="confirmYes">確定</button>
+    </div>
+  </section>
+
+  <!-- Step 5: 完了 -->
+  <section class="step hidden" id="step5">
+    <h2>注文完了</h2>
+    <p id="result"></p>
+  </section>
+
+  <script src="script.js"></script>
+</body>
+</html>
