@@ -108,11 +108,12 @@ document.getElementById('confirmYes').addEventListener('click', async () => {
   const total = document.getElementById('totalPrice').innerText;
   const payment = document.querySelector('input[name="payment"]:checked')?.value;
 
-  const res = await fetch('/order', {
+  const res = await fetch('/api/order', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ selectedMenus, total, orderDate: orderDateStr, payment })
   });
+
 
   const data = await res.json();
 
