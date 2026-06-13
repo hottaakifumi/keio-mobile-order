@@ -138,9 +138,9 @@ document.getElementById('confirmYes').addEventListener('click', async () => {
   let guideMessage;
   
   if (payment && payment.includes("QR")) {
-    guideMessage = `当日はこの画面とQRコードまたはバーコードを見せて「${categoryDisplay.join("、")}」と書かれてあるところへお越しください。`;
+    guideMessage = `当日はこの画面と支払い用のQRコードまたはバーコードを見せて「${categoryDisplay.join("、")}」と書かれてあるところへお越しください。`;
     
-    // ▼▼ QRコード決済の「み」バーコードを表示する処理 ▼▼
+    // ▼▼ QRコード決済「のみ」バーコードを表示する処理 ▼▼
     // 注文番号（data.orderNumber）を元にバーコードを生成
     setTimeout(() => {
       JsBarcode("#barcode", data.orderNumber, {
@@ -148,7 +148,6 @@ document.getElementById('confirmYes').addEventListener('click', async () => {
         lineColor: "#000",
         width: 2,
         height: 60,
-        displayValue: true // バーコードの下に注文番号のテキストも表示する
       });
     }, 50); // 要素が確実に表示されてから描画するためのわずかなディレイ
 
