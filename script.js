@@ -148,6 +148,7 @@ document.getElementById('confirmYes').addEventListener('click', async () => {
         lineColor: "#000",
         width: 2,
         height: 60,
+        displayValue: false
       });
     }, 50); // 要素が確実に表示されてから描画するためのわずかなディレイ
 
