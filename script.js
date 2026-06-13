@@ -103,30 +103,28 @@ document.getElementById('submitBtn').addEventListener('click', () => {
 });
 
 // 注文確定とサーバーへの送信
+// 注文確定とサーバーへの送信
 document.getElementById('confirmYes').addEventListener('click', async () => {
   const selectedMenus = Array.from(document.querySelectorAll('.menu:checked')).map(m => m.value);
   const total = document.getElementById('totalPrice').innerText;
   const payment = document.querySelector('input[name="payment"]:checked')?.value;
-
   const res = await fetch('/api/order', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ selectedMenus, total, orderDate: orderDateStr, payment })
   });
-
-
   const data = await res.json();
-
   // メニューのカテゴリーをチェック
   let categoryDisplay = [];
 
+  // ※トリミングミスを防ぐため、配列内のメニュー名に紛れていた半角スペースを修正しています
   const categories = {
-    "B カレー": ["カレーライス", "コロッケカレー", "カツカレー"," 大盛りカレー","エベレストカレー","ミニカレー"], // カレーのメニュー名をリストに
-    "C 定食・丼": ["たらふく丼", "たらふくランチ", "鶏竜田揚定食", " タルタル竜田定食"], // 定食・丼のメニュー名をリストに
-    "D 鉄板焼": ["金ちゃん焼肉"], // 鉄板焼きのメニュー名をリストに
-    "E 中華麺": ["豚天タルタルぶっかけうどん", "醤油ラーメン", "塩ラーメン"," 味噌ラーメン","とんこつラーメン","まぜそば","味噌カツラーメン","ミニカレー/ラーメンセット"], // 中華麺のメニュー名をリストに
-    "F 和麺": ["きつねうどん・そば", "ぶっかけうどん", "明太ぶっかけうどん","カツカレーうどん","ミートスパ","カレースパ"], // 和麺のメニュー名をリストに
-    "さぼてん": ["ロースカツ定食", "東京レトロ勝丼", "味噌カツ丼"] // さぼてんのメニュー名をリストに
+    "B カレー": ["カレーライス", "コロッケカレー", "カツカレー", "大盛りカレー", "エベレストカレー", "ミニカレー"],
+    "C 定食・丼": ["たらふく丼", "たらふくランチ", "鶏竜田揚定食", "タルタル竜田定食"],
+    "D 鉄板焼": ["金ちゃん焼肉"],
+    "E 中華麺": ["豚天タルタルぶっかけうどん", "醤油ラーメン", "塩ラーメン", "味噌ラーメン", "とんこつラーメン", "まぜそば", "味噌カツラーメン", "ミニカレー/ラーメンセット"],
+    "F 和麺": ["きつねうどん・そば", "ぶっかけうどん", "明太ぶっかけうどん", "カツカレーうどん", "ミートスパ", "カレースパ"],
+    "さぼてん": ["ロースカツ定食", "東京レトロ勝丼", "味噌カツ丼"]
   };
 
   for (const [category, items] of Object.entries(categories)) {
@@ -136,13 +134,31 @@ document.getElementById('confirmYes').addEventListener('click', async () => {
     }
   }
 
-  // 最終的な表示メッセージ
+  // 最終的な表示メッセージとバーコードの制御
   let guideMessage;
+  
   if (payment && payment.includes("QR")) {
     guideMessage = `当日はこの画面とQRコードまたはバーコードを見せて「${categoryDisplay.join("、")}」と書かれてあるところへお越しください。`;
+    
+    // ▼▼ QRコード決済の「み」バーコードを表示する処理 ▼▼
+    // 注文番号（data.orderNumber）を元にバーコードを生成
+    setTimeout(() => {
+      JsBarcode("#barcode", data.orderNumber, {
+        format: "CODE128", // 標準的なバーコード規格
+        lineColor: "#000",
+        width: 2,
+        height: 60,
+        displayValue: true // バーコードの下に注文番号のテキストも表示する
+      });
+    }, 50); // 要素が確実に表示されてから描画するためのわずかなディレイ
+
   } else {
     guideMessage = `当日はこの画面を見せて「${categoryDisplay.join("、")}」と書かれてあるところへお越しください。`;
+    
+    // ▼▼ 現金・クレカの場合はバーコードの中身を空にする ▼▼
+    document.getElementById("barcode").innerHTML = "";
   }
+
   document.getElementById("result").innerHTML = `
     注文が完了しました! 注文番号: ${data.orderNumber}<br><br>
     <p>${guideMessage}</p>
