@@ -103,7 +103,21 @@
     <button id="submitBtn" disabled>次へ</button>
   </div>
   </section>
+  <!-- Step 3.5: クレジットカード専用ページ (Step3とStep4の間に挿入) -->
+  <section class="step hidden" id="step3-5">
+    <h2>クレジットカード情報入力</h2>
+    <p style="color: red; font-weight: bold; margin-bottom: 15px;">※注意: これは模擬システムです。絶対に本物のクレジットカード情報を入力しないでください！</p>
+    
+    <label>カード番号: <input type="text" id="cc-number" placeholder="1234 5678 9012 3456"></label><br><br>
+    <label>有効期限: <input type="text" id="cc-exp" placeholder="MM/YY"></label><br><br>
+    <label>CVC: <input type="text" id="cc-cvc" placeholder="123"></label><br><br>
 
+    <div class="button-group">
+      <!-- 共通の戻るボタンクラスを付与 -->
+      <button class="backBtn">戻る</button>
+      <button id="ccNextBtn" disabled>次へ</button>
+    </div>
+  </section>
   <!-- Step 4: 確認 -->
   <section class="step hidden" id="step4">
     <div id="confirmModal">

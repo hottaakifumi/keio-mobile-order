@@ -90,15 +90,44 @@ document.querySelectorAll('.nextBtn').forEach(btn => {
   });
 });
 
-// 戻るボタンの制御
+// ----------------------------------------------------
+// ▼ここから既存の「戻るボタンの制御」を置き換え
+// ----------------------------------------------------
 document.body.addEventListener('click', (e) => {
-  if (e.target.classList.contains('backBtn') && currentStep > 1) {
-    goToStep(currentStep - 1);
+  if (e.target.classList.contains('backBtn') && currentStep != 1) {
+    if (currentStep === 4) {
+      const payment = document.querySelector('input[name="payment"]:checked')?.value;
+      // クレカ払いの場合は専用ページ(Step3-5)に戻る、それ以外はStep3に戻る
+      if (payment === "事前にクレジットカードで払う") {
+        goToStep('3-5');
+      } else {
+        goToStep(3);
+      }
+    } else if (currentStep === '3-5') {
+      goToStep(3); // クレカページからはStep3に戻る
+    } else {
+      goToStep(currentStep - 1);
+    }
   }
 });
 
-// 注文内容確認・表示
+
+// ----------------------------------------------------
+// ▼ここから既存の「注文内容確認・表示」を置き換え
+// ----------------------------------------------------
 document.getElementById('submitBtn').addEventListener('click', () => {
+  const payment = document.querySelector('input[name="payment"]:checked')?.value;
+  if (payment === "事前にクレジットカードで払う") {
+    // クレカ決済の場合は専用ページ(Step 3-5)へ遷移
+    goToStep('3-5');
+  } else {
+    // 現金・QR決済の場合は直接確認画面(Step 4)へ
+    showConfirmPage();
+  }
+});
+
+// 確認画面(Step4)への情報セットと遷移を関数化
+function showConfirmPage() {
   const selectedMenus = Array.from(document.querySelectorAll('.menu:checked')).map(m => m.value);
   const total = document.getElementById('totalPrice').innerText;
   const payment = document.querySelector('input[name="payment"]:checked')?.value;
@@ -109,7 +138,7 @@ document.getElementById('submitBtn').addEventListener('click', () => {
     <p>支払い方法: ${payment}</p>
   `;
   goToStep(4);
-});
+}
 
 // 注文確定とサーバーへの送信
 // 注文確定とサーバーへの送信
@@ -198,4 +227,29 @@ function scrollToCategory(categoryId) {
   if (target) {
     target.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
+}
+
+const ccNumber = document.getElementById('cc-number');
+const ccExp = document.getElementById('cc-exp');
+const ccCvc = document.getElementById('cc-cvc');
+const ccNextBtn = document.getElementById('ccNextBtn');
+
+if (ccNumber && ccExp && ccCvc && ccNextBtn) {
+  function checkCreditCardInputs() {
+    // トリム(前後の空白削除)して、1つでも空欄があれば true (ボタンを無効化)
+    const hasEmptyField = ccNumber.value.trim() === '' || 
+                          ccExp.value.trim() === '' || 
+                          ccCvc.value.trim() === '';
+    ccNextBtn.disabled = hasEmptyField;
+  }
+
+  // キーボードで入力されるたびにチェックを実行
+  ccNumber.addEventListener('input', checkCreditCardInputs);
+  ccExp.addEventListener('input', checkCreditCardInputs);
+  ccCvc.addEventListener('input', checkCreditCardInputs);
+
+  // 全て入力されて「次へ」を押したときは確認画面へ
+  ccNextBtn.addEventListener('click', () => {
+    showConfirmPage();
+  });
 }
