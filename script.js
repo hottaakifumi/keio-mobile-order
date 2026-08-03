@@ -1,6 +1,67 @@
 let currentStep = 1;
 let orderDateStr = "";
 
+// ▼▼▼ 在庫管理のための設定 ▼▼▼
+// 既存のカテゴリ情報をグローバルに移動（その他を含まない対象商品リスト）
+const categories = {
+  "B カレー": ["カレーライス", "コロッケカレー", "カツカレー", "大盛りカレー", "エベレストカレー", "ミニカレー"],
+  "C 定食・丼": ["たらふく丼", "たらふくランチ", "鶏竜田揚定食", "タルタル竜田定食"],
+  "D 鉄板焼": ["金ちゃん焼肉"],
+  "E 中華麺": ["豚天タルタルぶっかけうどん", "醤油ラーメン", "塩ラーメン", "味噌ラーメン", "とんこつラーメン", "まぜそば", "味噌カツラーメン", "ミニカレー/ラーメンセット"],
+  "F 和麺": ["きつねうどん・そば", "ぶっかけうどん", "明太ぶっかけうどん", "カツカレーうどん", "ミートスパ", "カレースパ"],
+  "さぼてん": ["ロースカツ定食", "東京レトロ勝丼", "味噌カツ丼"]
+};
+
+// localStorageを使用して在庫を初期化・取得
+let inventory = JSON.parse(localStorage.getItem('keio_inventory'));
+if (!inventory) {
+  inventory = {};
+  // その他を除く全ての商品を最初に10個に設定
+  for (const [category, items] of Object.entries(categories)) {
+    items.forEach(item => {
+      inventory[item] = 10;
+    });
+  }
+  localStorage.setItem('keio_inventory', JSON.stringify(inventory));
+}
+
+// 在庫状況を画面（HTML）に反映する関数
+function renderInventory() {
+  const checkboxes = document.querySelectorAll('.menu');
+  checkboxes.forEach(chk => {
+    const itemName = chk.value;
+    
+    // inventoryに存在する（＝「その他」以外の商品）場合のみ在庫処理を行う
+    if (inventory.hasOwnProperty(itemName)) {
+      const stockCount = inventory[itemName];
+      const label = chk.parentElement;
+      
+      // 既に在庫表示のspanがあれば一旦削除
+      const oldStockSpan = label.querySelector('.stock-info');
+      if (oldStockSpan) oldStockSpan.remove();
+
+      const stockSpan = document.createElement('span');
+      stockSpan.className = 'stock-info';
+      stockSpan.style.marginLeft = '10px';
+      stockSpan.style.fontWeight = 'bold';
+
+      if (stockCount > 0) {
+        stockSpan.innerText = `(残り${stockCount}個)`;
+        stockSpan.style.color = '#333';
+        chk.disabled = false;
+      } else {
+        // 全てなくなったらメッセージを表示し、チェックボックスを無効化
+        stockSpan.innerHTML = `<span style="color:red; font-size:0.85em;">こちらでは注文できません。当日券売機で買ってください。</span>`;
+        chk.disabled = true;
+        chk.checked = false; // 強制的にチェックを外す
+      }
+      label.appendChild(stockSpan);
+    }
+  });
+}
+// ▲▲▲ 在庫管理のための設定 ここまで ▲▲▲
+
+
 window.addEventListener('DOMContentLoaded', () => {
   const now = new Date();
   const isAfter14 = now.getHours() > 14 || (now.getHours() === 14 && now.getMinutes() >= 0);
@@ -66,6 +127,9 @@ window.addEventListener('DOMContentLoaded', () => {
       document.querySelector('#step2 .nextBtn').disabled = !anySelected;
     });
   });
+
+  // 初期読み込み時に在庫を表示
+  renderInventory();
 });
 
 // 支払い方法選択の監視
@@ -83,6 +147,7 @@ document.querySelectorAll('input[name="payment"]').forEach(payment => {
     }
   });
 });
+
 // 次へボタンの制御
 document.querySelectorAll('.nextBtn').forEach(btn => {
   btn.addEventListener('click', () => {
@@ -90,9 +155,7 @@ document.querySelectorAll('.nextBtn').forEach(btn => {
   });
 });
 
-// ----------------------------------------------------
-// ▼ここから既存の「戻るボタンの制御」を置き換え
-// ----------------------------------------------------
+// 戻るボタンの制御
 document.body.addEventListener('click', (e) => {
   if (e.target.classList.contains('backBtn') && currentStep != 1) {
     if (currentStep === 4) {
@@ -111,10 +174,7 @@ document.body.addEventListener('click', (e) => {
   }
 });
 
-
-// ----------------------------------------------------
-// ▼ここから既存の「注文内容確認・表示」を置き換え
-// ----------------------------------------------------
+// 注文内容確認・表示
 document.getElementById('submitBtn').addEventListener('click', () => {
   const payment = document.querySelector('input[name="payment"]:checked')?.value;
   if (payment === "事前にクレジットカードで払う") {
@@ -141,29 +201,32 @@ function showConfirmPage() {
 }
 
 // 注文確定とサーバーへの送信
-// 注文確定とサーバーへの送信
 document.getElementById('confirmYes').addEventListener('click', async () => {
   const selectedMenus = Array.from(document.querySelectorAll('.menu:checked')).map(m => m.value);
   const total = document.getElementById('totalPrice').innerText;
   const payment = document.querySelector('input[name="payment"]:checked')?.value;
+  
+  // ▼▼▼ 在庫の減算と保存処理を追加 ▼▼▼
+  selectedMenus.forEach(item => {
+    // 注文された商品が在庫管理対象であれば1減らす
+    if (inventory.hasOwnProperty(item) && inventory[item] > 0) {
+      inventory[item] -= 1;
+    }
+  });
+  // 最新の在庫状況をlocalStorageに保存し、表示を更新
+  localStorage.setItem('keio_inventory', JSON.stringify(inventory));
+  renderInventory(); 
+  // ▲▲▲ 在庫の減算と保存処理 ここまで ▲▲▲
+
   const res = await fetch('/api/order', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ selectedMenus, total, orderDate: orderDateStr, payment })
   });
   const data = await res.json();
+  
   // メニューのカテゴリーをチェック
   let categoryDisplay = [];
-
-  // ※トリミングミスを防ぐため、配列内のメニュー名に紛れていた半角スペースを修正しています
-  const categories = {
-    "B カレー": ["カレーライス", "コロッケカレー", "カツカレー", "大盛りカレー", "エベレストカレー", "ミニカレー"],
-    "C 定食・丼": ["たらふく丼", "たらふくランチ", "鶏竜田揚定食", "タルタル竜田定食"],
-    "D 鉄板焼": ["金ちゃん焼肉"],
-    "E 中華麺": ["豚天タルタルぶっかけうどん", "醤油ラーメン", "塩ラーメン", "味噌ラーメン", "とんこつラーメン", "まぜそば", "味噌カツラーメン", "ミニカレー/ラーメンセット"],
-    "F 和麺": ["きつねうどん・そば", "ぶっかけうどん", "明太ぶっかけうどん", "カツカレーうどん", "ミートスパ", "カレースパ"],
-    "さぼてん": ["ロースカツ定食", "東京レトロ勝丼", "味噌カツ丼"]
-  };
 
   for (const [category, items] of Object.entries(categories)) {
     const isCategorySelected = selectedMenus.some(menu => items.includes(menu));
@@ -178,22 +241,21 @@ document.getElementById('confirmYes').addEventListener('click', async () => {
   if (payment && payment.includes("QR")) {
     guideMessage = `当日はこの画面と支払い用のQRコードまたはバーコードを見せて「${categoryDisplay.join("、")}」と書かれてあるところへお越しください。`;
     
-    // ▼▼ QRコード決済「のみ」バーコードを表示する処理 ▼▼
-    // 注文番号（data.orderNumber）を元にバーコードを生成
+    // QRコード決済「のみ」バーコードを表示する処理
     setTimeout(() => {
       JsBarcode("#barcode", data.orderNumber, {
-        format: "CODE128", // 標準的なバーコード規格
+        format: "CODE128",
         lineColor: "#000",
         width: 2,
         height: 60,
         displayValue: false
       });
-    }, 50); // 要素が確実に表示されてから描画するためのわずかなディレイ
+    }, 50);
 
   } else {
     guideMessage = `当日はこの画面を見せて「${categoryDisplay.join("、")}」と書かれてあるところへお越しください。`;
     
-    // ▼▼ 現金・クレカの場合はバーコードの中身を空にする ▼▼
+    // 現金・クレカの場合はバーコードの中身を空にする
     document.getElementById("barcode").innerHTML = "";
   }
 
@@ -229,6 +291,7 @@ function scrollToCategory(categoryId) {
   }
 }
 
+// クレジットカード情報の入力監視
 const ccNumber = document.getElementById('cc-number');
 const ccExp = document.getElementById('cc-exp');
 const ccCvc = document.getElementById('cc-cvc');
