@@ -87,7 +87,16 @@
   <section class="step hidden" id="step3">
     <h2>支払い方法</h2>
     <input type="radio" name="payment" value="当日、店頭で現金払い"> 当日、店頭で現金払い<br/>
-    <input type="radio" name="payment" value="事前にクレジットカードで払う"> 事前にクレジットカードで払う(こちらを押した場合、クレジットカード情報の記入は不要です。続けて、「次へ」ボタンを押してください。)<br/>
+    <input type="radio" name="payment" id="creditCardRadio" value="事前にクレジットカードで払う"> 事前にクレジットカードで払う<br/>
+    
+    <!-- 追加: クレジットカード入力ダミーフォーム (初期状態はhiddenで隠す) -->
+    <div id="dummyCardForm" class="hidden" style="margin: 10px 0; padding: 15px; border: 2px solid #ff4444; background-color: #ffeeee;">
+      <p style="color: red; font-weight: bold; margin-top: 0;">※注意: これは模擬システムです。絶対に本物のクレジットカード情報を入力しないでください！「1234」などの適当な数字を入力して体験してください。</p>
+      <label>カード番号: <input type="text" placeholder="1234 5678 9012 3456"></label><br>
+      <label>有効期限: <input type="text" placeholder="MM/YY"></label><br>
+      <label>CVC: <input type="text" placeholder="123"></label>
+    </div>
+
     <input type="radio" name="payment" value="当日、QRコードやバーコードで決済"> 当日、QRコードやバーコードで決済(PayPay、楽天ペイ、d払い、au PAY、メルペイを使用できます。)<br/>
     <div class="button-group">
     <button class="backBtn">戻る</button>

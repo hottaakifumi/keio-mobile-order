@@ -69,9 +69,18 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 // 支払い方法選択の監視
+const dummyCardForm = document.getElementById('dummyCardForm');
+
 document.querySelectorAll('input[name="payment"]').forEach(payment => {
-  payment.addEventListener('change', () => {
+  payment.addEventListener('change', (e) => {
     document.getElementById('submitBtn').disabled = false;
+    
+    // クレジットカードが選ばれたらダミーフォームを表示、それ以外なら隠す
+    if (e.target.value === "事前にクレジットカードで払う") {
+      dummyCardForm.classList.remove('hidden');
+    } else {
+      dummyCardForm.classList.add('hidden');
+    }
   });
 });
 // 次へボタンの制御
